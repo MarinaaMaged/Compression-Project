@@ -1,0 +1,548 @@
+* {
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+:root {
+    --main-color: #d63e3e;
+    --main-color-alt: #d63e3e;
+    --main-transition: 0.3s;
+    --main-padding-top: 100px;
+    --main-padding-bottom: 100px;
+    --section-background: #ececec;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    font-family: "Roboto", serif;
+}
+a {
+    text-decoration: none;
+}
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Small */
+@media (min-width: 768px) {
+    .container {
+        width: 750px;
+    }
+}
+  /* Medium */
+@media (min-width: 992px) {
+    .container {
+
+        width: 970px;
+    }
+}
+  /* Large */
+@media (min-width: 1200px) {
+    .container {
+
+        width: 1170px;
+    }
+}
+/* End Global Rules */
+
+/* Start Header */
+.header{
+    background-color: white;
+    box-shadow: 0 0 10px #ddd;
+    -webkit-box-shadow: 0 0 10px #ddd ;
+    -moz-box-shadow: 0 0 10px #ddd ;
+    position: relative;
+}
+.header .container{
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    position: relative;
+
+}
+
+.header .logo{
+    color: var(--main-color);
+    font-weight: bold;
+    font-size: 26px;
+    height: 72px;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+@media (max-width:767px) {
+    .header .logo{
+        width: 100%;
+        height: 40px;
+
+    }
+}
+
+.header .main-nav{
+    display: flex;
+}
+@media (max-width:767px) {
+    .header .main-nav{
+        margin: auto;
+    }
+}
+
+/* Tragets Direct Child Only */
+.header .main-nav > li > a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 72px;
+    position: relative;
+    transition: var(--main-transition);
+
+    padding: 0 30px;
+    color: black;
+
+    overflow: hidden;
+}
+@media (max-width:767px) {
+    .header .main-nav > li > a {
+        padding: 10px;
+        font-size: 14px;
+        height: 40px;
+    }
+}
+
+.header .main-nav > li > a::before{
+    content:"" ;
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: var(--main-color);
+    top: 0;
+    left: -100%;
+    transition: var(--main-transition);
+}
+
+.header .main-nav > li > a:hover{
+    color: var(--main-color);
+    background-color: var(--section-background);
+}
+
+.header .main-nav > li > a:hover::before{
+    left: 0;
+}
+
+/* Dropdown Styles */
+.header .dropdown {
+    position: relative;
+}
+
+.header .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 72px; /* Matches the height of the header */
+    left: 0;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 1000;
+    padding: 0;
+    border-radius: 4px;
+}
+
+.header .dropdown-content li a {
+    display: block;
+    padding: 10px 20px;
+    text-align: left;
+    color: black;
+    font-size: 14px;
+    transition: var(--main-transition);
+}
+
+.header .dropdown-content li a:hover {
+    background-color: var(--section-background);
+    color: var(--main-color);
+}
+
+.header .main-nav > li.dropdown > a::after {
+    content: ""; /* Add dropdown arrow */
+    font-size: 12px;
+    margin-left: 5px;
+    transition: transform var(--main-transition);
+}
+
+.header .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 767px) {
+    .header .dropdown-content {
+        position: static;
+        box-shadow: none;
+        padding: 0;
+    }
+    .header .dropdown-content li a {
+        padding: 10px;
+        text-align: center;
+    }
+}
+
+
+/* Start Landing */
+
+.section .container{
+    /* minus the header height */
+    min-height: calc(100vh - 72px);
+    display: flex;
+    align-items: center;
+    padding-bottom: 120px;
+
+}
+
+@media (max-width: 991px) {
+    .section .container {
+        flex-direction: column; /* Stack the children vertically */
+        align-items: center; /* Center-align all content */
+    }
+
+    .section .text {
+        text-align: center; /* Center-align the text content */
+        margin-bottom: 20px; /* Add spacing below the text */
+    }
+
+    .buttons {
+        width: 100%; 
+        max-width: 300px; 
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center; 
+        gap: 20px; 
+    }
+
+    .buttons button {
+        width: 80%; 
+        max-width: 300px; 
+        height: auto; 
+        text-align: center; 
+        padding: 15px 20px; 
+        font-size: 20px; 
+    }
+}
+
+
+.section .text{
+    /* To give it the appropriate grow */
+    flex: 1;
+}
+@media (max-width:991px) {
+    .section .text {
+        text-align: center;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    } 
+}
+
+.section .text h1{
+    font-size: 40px;
+    margin-bottom: 15px;
+    letter-spacing: -2;
+}
+@media (max-width:991px) {
+    .section .text h1 {
+        font-size: 28px;
+    } 
+}
+.section .text p{
+    font-size: 20px;
+    margin: 5px 0 0;
+    color: #666;
+    line-height: 1.7;
+    max-width: 500px;
+}
+@media (max-width:991px) {
+    .section .text p {
+        margin: 10px auto;
+        font-size: 18px;
+    } 
+}
+
+.section .image img{
+    width: 550px;
+}
+
+@media (max-width:991px) {
+    .section .image {
+        display: none;
+    } 
+}
+/* Start lossless Section */
+
+.section .text p:not(:first-child){
+    display: inline;
+}
+
+.section .text h2{
+    font-size: 30px;
+    margin-bottom: 15px;
+    letter-spacing: -1;
+}
+
+@media (max-width:991px) {
+    .section .text  h2 {
+        font-size: 22px;
+    } 
+}
+
+.section .text  ul li {
+    font-size: 25px;
+    margin-bottom: 30px;
+    letter-spacing: -1;
+}
+
+@media (max-width:991px) {
+    .section .text  ul li {
+        font-size: 25px;
+    } 
+}
+
+.section .text ul li p{
+    font-size: 20px;
+    margin: 5px 0 0;
+    color: #666;
+    line-height: 1.7;
+    max-width: 500px;
+}
+@media (max-width:991px) {
+    .section .text  ul li p{
+        margin: 10px auto;
+        font-size: 18px;
+    } 
+}
+
+.buttons{
+    width: 300px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transform: translateY(30%);
+}
+
+.buttons button{
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #eee;
+    font-size: 25px;
+    background-color: var(--main-color) ;
+    padding: 10px 20px;
+    width: 300px;
+    height: 120px;
+    box-shadow: 0 4px 6px rgba(151, 151, 151, 0.1); /* Adds shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Adds smooth transitions */
+}
+
+.buttons button:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 8px 12px rgba(81, 81, 81, 0.2);
+    color: #eceaea;
+    background-color: #ab0606; 
+}
+
+/* End lSection */
+
+.compression_box {
+    width: 100%;
+    height: 80vh;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 8px rgb(225 223 223);
+    margin-bottom: 30px;
+}
+
+@media (max-width:991px) {
+    .compression_box{
+        width: 450px;
+        height: 60vh;
+    }
+}
+
+.compression_box form{
+    width: 96%;
+    height: 100%;
+    margin: auto;
+    padding: 20px;
+}
+
+form >p{
+    padding: 10px 5px;
+    font-size: 25px;
+    margin: 20px auto;
+}
+
+form div{
+    height: 60px;
+    margin: 20px auto;
+    padding: 5px;
+}
+
+form .pr{
+    height: 110px;
+    display: none;
+}
+
+form div label{
+    background: #f5f5f5;
+    display: block;
+    padding: 12px;
+    border-radius: 4px;
+    width: 90%;
+    line-height: 25px;
+    border: 2px solid #e5e5e5;
+    position: relative;
+}
+
+form div label::before{
+    position: absolute;
+    content: "Browse";
+    right: -2px;
+    top:-2px ;
+    width: 100px;
+    height: 107%;
+    line-height: 50px;
+    background: #cccccc;
+    text-align: center;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+
+strong{
+    width: 50%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+strong h4{
+    background: var(--main-color);
+    padding: 8px 20px;
+    color: white;
+    border-radius:5px ;
+}
+
+progress{
+    width: 50%;
+    height: 30px;
+    border-radius:5px ;
+    overflow: hidden;
+}
+
+progress::-webkit-progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0; 
+}
+
+progress::-webkit-progress-value {
+    background-color: #1b9117; /* Progress bar color */
+    border-radius: 5px;
+}
+
+.compression_box form button {
+    margin: 10px;
+    padding: 12px 18px;
+    width: 165px;
+    color: white;
+    font-size: 18px;
+    outline: none;
+    border: none;
+    background: var(--main-color);
+    cursor: pointer;
+}
+
+.compression_box form button span:nth-child(2),
+.compression_box form button.active span:first-child{
+    display: none;
+}
+
+.compression_box form button.active span:nth-child(2){
+    display: inline-block;
+}
+
+.compression_box .cancel{
+    background: #959595 ; 
+    visibility: hidden;
+}
+
+.uploading{
+    position: relative;
+    padding-left: 20px;
+}
+
+.uploading:before{
+    position: absolute;
+    content: "";
+    left: -12px;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    border: 2px solid;
+    border-color: white transparent white transparent;
+    animation: rotate 1s infinite;
+}
+
+@keyframes rotate {
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Space between buttons */
+    flex-wrap: wrap; /* Allows buttons to stack on smaller screens */
+}
+
+.button-group .btn {
+    width: 165px;
+    height: 70px;
+    padding: 10px 20px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: rgb(20, 3, 64);
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+
+.button-group .btn:hover{
+    background-color: rgb(15, 3, 44);
+}
+
+@media (max-width: 768px) {
+    .button-group {
+        flex-direction: column; /* Stack buttons vertically on small screens */
+        gap: 15px; /* Increase space between buttons */
+    }
+}
