@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request, jsonify, send_file, curre
 import os
 from werkzeug.utils import secure_filename
 from Website.compression.huffmanCoding import HuffmanCoding
+from Website.compression.lzw import lzw_compression,lzw_decompress
+from Website.compression.uniform_quantization_last_version import quantized_image , decompress_image
 
 
 main = Blueprint('main', __name__)
@@ -39,7 +41,7 @@ def uniform():
 
 
 @main.route('/huffmanProcess', methods=['POST'])
-def process():
+def huffman_process():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
@@ -62,6 +64,39 @@ def process():
                 return send_file(compressed_file, as_attachment=True, download_name=os.path.basename(compressed_file))
             elif action == 'decompress':
                 decompressed_file = huffman.decompress(filepath)
+                return send_file(decompressed_file, as_attachment=True, download_name=os.path.basename(decompressed_file))
+            else:
+                return jsonify({'error': 'Invalid action'}), 400
+        finally:
+            if os.path.exists(filepath):
+                os.remove(filepath)
+
+    return jsonify({'error': 'Invalid file type'}), 400
+
+
+@main.route('/lzwProcess', methods=['POST'])
+def lzw_process():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        try:
+            action = request.form.get('action')
+
+            if action == 'compress':
+                compressed_file,_ = lzw_compression(filepath)
+                return send_file(compressed_file, as_attachment=True, download_name=os.path.basename(compressed_file))
+            elif action == 'decompress':
+                decompressed_file,_ = lzw_decompress(filepath)
                 return send_file(decompressed_file, as_attachment=True, download_name=os.path.basename(decompressed_file))
             else:
                 return jsonify({'error': 'Invalid action'}), 400

@@ -8,7 +8,7 @@ app = Flask(__name__,  template_folder=os.path.join(os.getcwd(), 'Website/app/te
 
 
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')  # Set upload folder
-app.config['ALLOWED_EXTENSIONS'] = {'txt', 'bin'}  # Set allowed file extensions
+app.config['ALLOWED_EXTENSIONS'] = {'txt', 'bin','jpg','pdf','docx','jpeg'}  # Set allowed file extensions
 
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
