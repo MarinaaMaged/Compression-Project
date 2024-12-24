@@ -3,7 +3,6 @@ import os
 from werkzeug.utils import secure_filename
 from Website.compression.huffmanCoding import HuffmanCoding
 from Website.compression.lzw import lzw_compression,lzw_decompress
-from Website.compression.uniform_quantization_last_version import quantized_image , decompress_image
 
 
 main = Blueprint('main', __name__)
