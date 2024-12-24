@@ -19,7 +19,6 @@ class ArithmeticCoding:
 
     @staticmethod
     def get_cumulative_prob(symbol_probs):
-        #Generate cumulative probabilities for symbols.
         cumulative_prob = {}
         cumulative = Decimal(0.0)
 
@@ -31,7 +30,6 @@ class ArithmeticCoding:
 
     @staticmethod
     def encode(text, symbol_probs):
-        #Perform arithmetic encoding
         low = Decimal(0.0)
         high = Decimal(1.0)
         cumulative_prob = ArithmeticCoding.get_cumulative_prob(symbol_probs)
@@ -45,7 +43,6 @@ class ArithmeticCoding:
 
     @staticmethod
     def decode(encoded_value, length, symbol_probs):
-        #Perform arithmetic decoding 
         cumulative_prob = ArithmeticCoding.get_cumulative_prob(symbol_probs)
         decoded_text = ""
 
@@ -95,14 +92,30 @@ class FileCompressor:
             self.text = TextExtractor.extract_text_from_txt(self.file_path)
 
     def compress(self):
-        #Compress the text using arithmetic encoding.
         symbol_probs = ArithmeticCoding.calculate_symbol_probs(self.text)
         encoded_value = ArithmeticCoding.encode(self.text, symbol_probs)
-        return encoded_value, symbol_probs
+        compressed_filename = "compressed_output.txt"
+        with open(compressed_filename, 'w') as f:
+            f.write(str(encoded_value))
+        
+        return compressed_filename
 
-    def decompress(self, encoded_value, symbol_probs):
-        #Decompress the encoded value to reconstruct the original text.
-        return ArithmeticCoding.decode(encoded_value, len(self.text), symbol_probs)
+    def decompress(self):
+        symbol_probs = ArithmeticCoding.calculate_symbol_probs(self.text)
+        compressed_filename = "compressed_output.txt"
+        
+        with open(compressed_filename, 'r') as f:
+            encoded_value_str = f.read().strip()
+        
+        encoded_value = Decimal(encoded_value_str)
+        decompressed_text = ArithmeticCoding.decode(encoded_value, len(self.text), symbol_probs)
+        
+        decompressed_filename = "decompressed_output.txt"
+        
+        with open(decompressed_filename, 'w') as f:
+            f.write(decompressed_text.strip())
+        
+        return decompressed_filename
 
 if __name__ == "__main__":
     file_path = input("Enter the path to the file: ").strip()
@@ -111,8 +124,8 @@ if __name__ == "__main__":
     compressor.load_text()
     print(f"Text extracted from file: {compressor.text.strip()}")
 
-    encoded_value, symbol_probs = compressor.compress()
-    print(f"Compressed Value: {encoded_value}")
+    compressed_file_path = compressor.compress()
+    print(f"Compressed Value saved to: {compressed_file_path}")
 
-    decompressed_text = compressor.decompress(encoded_value, symbol_probs)
-    print(f"Decompressed Text: {decompressed_text.strip()}")
+    decompressed_file_path = compressor.decompress()
+    print(f"Decompressed Text saved to: {decompressed_file_path}")
