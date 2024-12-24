@@ -48,9 +48,9 @@
                 <h1>
                     Lossless Compression
                 </h1>
-                <div class="compression_box">
-                    <h2>Huffman Algorithm</h2>
 
+                <div class="compression_box">
+                    <h2>Arithmetic Algorithm</h2>
                     <form action="" autocomplete="off" enctype="multipart/form-data" >
                         <p>Upload Here!</p>
                         <div>
@@ -152,50 +152,6 @@
             }
 
         }
-
-         document.getElementById('compressBtn').addEventListener('click', () => processFile('compress'));
-         document.getElementById('decompressBtn').addEventListener('click', () => processFile('decompress'));
-
- function processFile(action) {
-    const fileInput = document.getElementById('upload');
-    const statusMessage = document.getElementById('statusMessage');
-
-    if (!fileInput.files.length) {
-        statusMessage.textContent = 'Please select a file.';
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    formData.append('action', action);
-
-    fetch('http://127.0.0.1:5000/huffmanProcess', {
-        method: 'POST',
-        body: formData,
-    })
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            // Get the filename from the "Content-Disposition" header
-            const contentDisposition = response.headers.get('Content-Disposition');
-            const filename = contentDisposition
-                ? contentDisposition.split('filename=')[1].replace(/"/g, '')
-                : (action === 'compress' ? 'compressed_text.bin' : 'decompressed_text.txt');
-
-            return response.blob().then(blob => ({ blob, filename }));
-        })
-        .then(({ blob, filename }) => {
-            // Create a download link for the processed file
-            const downloadLink = document.createElement('a');
-            downloadLink.href = URL.createObjectURL(blob);
-            downloadLink.download = filename;
-            downloadLink.click();
-            statusMessage.textContent = `${action.charAt(0).toUpperCase() + action.slice(1)} successful!`;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            statusMessage.textContent = 'An error occurred. Please try again.';
-        });
-}
 
 
     </script>
