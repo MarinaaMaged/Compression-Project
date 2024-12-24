@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, jsonify, send_file, curre
 import os
 from werkzeug.utils import secure_filename
 from Website.compression.huffmanCoding import HuffmanCoding
-from Website.compression.lzw import lzw_compression,lzw_decompress
+from Website.compression.lzw import LZWCompression
 
 
 main = Blueprint('main', __name__)
@@ -90,12 +90,13 @@ def lzw_process():
 
         try:
             action = request.form.get('action')
+            lzw = LZWCompression()
 
             if action == 'compress':
-                compressed_file,_ = lzw_compression(filepath)
+                compressed_file,_ = lzw.compress(filepath)
                 return send_file(compressed_file, as_attachment=True, download_name=os.path.basename(compressed_file))
             elif action == 'decompress':
-                decompressed_file,_ = lzw_decompress(filepath)
+                decompressed_file,_ = lzw.decompress(filepath)
                 return send_file(decompressed_file, as_attachment=True, download_name=os.path.basename(decompressed_file))
             else:
                 return jsonify({'error': 'Invalid action'}), 400

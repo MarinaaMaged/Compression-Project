@@ -1,140 +1,134 @@
+import os
 import ast
 import math
-import os
 from collections import Counter
 
-def read_file(file_path):
-    """Reads the content of a file and returns it as a string."""
-    try:
-        with open(file_path, 'r') as file:
-            return file.read()
-    except FileNotFoundError:
-        print(f"Error: The file '{file_path}' was not found.")
-        return None
+class LZWCompression:
+    def __init__(self):
+        self.ascii_dict = dict(map(lambda i: (chr(i), i), range(128)))
+        self.reverse_ascii_dict = dict(map(lambda i: (i, chr(i)), range(128)))
 
-def write_file(file_path, content):
-    """Writes the given content to a file."""
-    with open(file_path, 'w') as file:
-        file.write(content)
+    def read_file(self, file_path):
+        """Reads the content of a file and returns it as a string."""
+        try:
+            with open(file_path, 'r') as file:
+                return file.read()
+        except FileNotFoundError:
+            print(f"Error: The file '{file_path}' was not found.")
+            return None
 
-def calculate_entropy(data):
-    freq = Counter(data)
-    total_symbols = len(data)
-    probabilities = [count / total_symbols for count in freq.values()]
-    entropy = -sum(p * math.log2(p) for p in probabilities if p > 0)
-    return entropy
+    def write_file(self, file_path, content):
+        """Writes the given content to a file."""
+        with open(file_path, 'w') as file:
+            file.write(content)
 
-def calculate_average_bits_per_symbol(data, compressed):
-    if not data or not compressed:
-        return 0
-    total_bits = len(compressed) * math.ceil(math.log2(max(compressed) + 1))
-    return total_bits / len(data)
+    def compress(self, file_path):
+        data = self.read_file(file_path)
+        if not data:
+            return None, 0
 
-def calculate_compression_savings(original_data, compressed_data):
-    original_bits = len(original_data) * 8
-    compressed_bits = len(compressed_data) * math.ceil(math.log2(max(compressed_data) + 1))
-    savings = (1 - compressed_bits / original_bits) * 100
-    return savings
+        base_name = os.path.splitext(file_path)[0]
+        output_path = f"{base_name}_compressed.lzw"
 
-def calculate_compression_efficiency(original_data, compressed_data):
-    compressed_entropy = calculate_entropy(original_data)
-    average_bits = calculate_average_bits_per_symbol(original_data, compressed_data)
-    return (compressed_entropy / average_bits) * 100
+        # Initialize compression variables
+        current_sequence = ""
+        compressed = []
+        next_code = 128
 
-def lzw_compression(file_path):
-    """Compresses the content of a file using LZW algorithm."""
-    data = read_file(file_path)
-    if not data:
-        return None, None  # Return None if there's no data to compress
+        # Compression process
+        for char in data:
+            new_sequence = current_sequence + char
+            if new_sequence in self.ascii_dict:
+                current_sequence = new_sequence
+            else:
+                compressed.append(self.ascii_dict[current_sequence])
+                self.ascii_dict[new_sequence] = next_code
+                next_code += 1
+                current_sequence = char
 
-    base_name = os.path.splitext(file_path)[0]
-    output_path = f"{base_name}_compressed.txt"
+        # Add the last sequence to the output
+        if current_sequence:
+            compressed.append(self.ascii_dict[current_sequence])
 
-    # Initialize ASCII dictionary
-    ascii_dict = {chr(i): i for i in range(128)}
-    current_sequence = ""
-    compressed = []
-    next_code = 128
+        # Save compressed data
+        self.write_file(output_path, str(compressed))
 
-    # Compression process
-    for next_char in data:
-        new_sequence = current_sequence + next_char
-        if new_sequence in ascii_dict:
-            current_sequence = new_sequence
+        # Calculate compression ratio
+        if compressed:
+            bit_length = math.ceil(math.log2(max(compressed) + 1))
+            compression_ratio = (len(data) * 8) / (len(compressed) * bit_length)
         else:
-            compressed.append(ascii_dict[current_sequence])
-            ascii_dict[new_sequence] = next_code
-            next_code += 1
-            current_sequence = next_char
+            compression_ratio = 0
 
-    # Add the last sequence to the output
-    if current_sequence:
-        compressed.append(ascii_dict[current_sequence])
+        return output_path, compression_ratio
 
-    write_file(output_path, str(compressed))
+    def decompress(self, file_path):
+        compressed_data = self.read_file(file_path)
+        if not compressed_data:
+            return None, 0
 
-    # Metrics calculations
-    compression_ratio = len(data) * 8 / (len(compressed) * math.ceil(math.log2(max(compressed) + 1)))
-    entropy = calculate_entropy(data)
-    avg_bits = calculate_average_bits_per_symbol(data, compressed)
-    savings = calculate_compression_savings(data, compressed)
-    efficiency = calculate_compression_efficiency(data, compressed)
+        base_name = os.path.splitext(file_path)[0]
+        output_path = f"{base_name}_decompressed.txt"
 
-    metrics = {
-        "compression_ratio": compression_ratio,
-        "entropy": entropy,
-        "average_bits_per_symbol": avg_bits,
-        "compression_savings": savings,
-        "compression_efficiency": efficiency
-    }
-
-    return output_path, metrics
-
-def lzw_decompress(file_path):
-    """Decompresses a file compressed with the LZW algorithm."""
-    compressed_data = read_file(file_path)
-    if not compressed_data:
-        print("Error: No data to decompress.")
-        return None, None
-
-    base_name = os.path.splitext(file_path)[0]
-    output_path = f"{base_name}_decompressed.txt"
-
-    # Parse the compressed data
-    if isinstance(compressed_data, str):
+        # Convert string representation back to list
         compressed_data = ast.literal_eval(compressed_data)
 
-    # Initialize ASCII dictionary
-    ascii_dict = {i: chr(i) for i in range(128)}
-    dict_size = 128
+        # Initialize decompression variables
+        decompressed_data = []
+        current_code = compressed_data.pop(0)
+        prev_string = self.reverse_ascii_dict[current_code]
+        decompressed_data.append(prev_string)
+        next_code = 128
 
-    # Decompression variables
-    current_code = compressed_data.pop(0)
-    pre_string = ascii_dict[current_code]
-    decompressed_data = [pre_string]
+        for code in compressed_data:
+            if code in self.reverse_ascii_dict:
+                current_string = self.reverse_ascii_dict[code]
+            elif code == next_code:
+                current_string = prev_string + prev_string[0]
+            else:
+                raise ValueError("Invalid compressed data.")
 
-    for code in compressed_data:
-        if code in ascii_dict:
-            current = ascii_dict[code]
-        elif code == dict_size:
-            current = pre_string + pre_string[0]
-        else:
-            raise ValueError("Invalid compressed data.")
+            decompressed_data.append(current_string)
 
-        decompressed_data.append(current)
-        ascii_dict[dict_size] = pre_string + current[0]
-        dict_size += 1
-        pre_string = current
+            # Update dictionary
+            self.reverse_ascii_dict[next_code] = prev_string + current_string[0]
+            next_code += 1
 
-    decompressed_text = "".join(decompressed_data)
-    write_file(output_path, decompressed_text)
+            prev_string = current_string
 
-    # Metrics calculations
-    original_entropy = calculate_entropy(decompressed_text)
-    metrics = {
-        "entropy": original_entropy,
-        "decompressed_length": len(decompressed_text)
-    }
+        # Save decompressed data
+        decompressed_text = ''.join(decompressed_data)
+        self.write_file(output_path, decompressed_text)
 
-    return output_path, metrics
+        return output_path, len(decompressed_text)
 
+    def calculate_entropy(self, data):
+        freq = Counter(data)
+        total_symbols = len(data)
+        probabilities = [count / total_symbols for count in freq.values()]
+        entropy = -sum(p * math.log2(p) for p in probabilities if p > 0)
+        return entropy
+
+    def calculate_metrics(self, original_path, compressed_path):
+        original_data = self.read_file(original_path)
+        compressed_data = self.read_file(compressed_path)
+        if not original_data or not compressed_data:
+            return {}
+
+        compressed_data = ast.literal_eval(compressed_data)
+
+        # Calculate metrics
+        entropy = self.calculate_entropy(original_data)
+        original_bits = len(original_data) * 8
+        compressed_bits = len(compressed_data) * math.ceil(math.log2(max(compressed_data) + 1))
+        savings = (1 - compressed_bits / original_bits) * 100
+        avg_bits = compressed_bits / len(original_data) if len(original_data) else 0
+        efficiency = (entropy / avg_bits) * 100 if avg_bits else 0
+
+        return {
+            'entropy': entropy,
+            'compression_ratio': original_bits / compressed_bits if compressed_bits else 0,
+            'savings': savings,
+            'average_bits_per_symbol': avg_bits,
+            'efficiency': efficiency
+        }
