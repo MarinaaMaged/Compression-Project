@@ -20,6 +20,7 @@ body {
 }
 a {
     text-decoration: none;
+    color: #fefbfb;
 }
 ul {
     list-style: none;
@@ -238,6 +239,7 @@ ul {
         height: auto; 
         text-align: center; 
         padding: 15px 20px; 
+        padding-bottom: 20px;
         font-size: 20px; 
     }
 }

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 class ImageQuantization:
-    def __init__(self, image_path, num_levels):
+    def __init__(self, image_path, num_levels=16):
         self.image_path = image_path
         self.num_levels = num_levels
         self.image = self.load_image()
@@ -100,6 +100,25 @@ class ImageQuantization:
         plt.tight_layout()
         plt.show()
 
+    def quanty (self):
+        image_path = self.image_path
+
+        compressed_path = "quantized_image.jpg"
+        decompressed_path = "dequantized_image.jpg"
+
+        
+        num_levels = self.num_levels
+
+        # instance of ImageQuantization
+        quantizer = ImageQuantization(image_path, num_levels)
+
+        compressed_file = quantizer.uniform_quantization(compressed_path)
+        decompressed_file = quantizer.decompress_image(decompressed_path)
+        return compressed_file , decompressed_file
+
+
+
+
 if __name__ == "__main__":
     try:
         image_path = input("Enter the path to the image: ").strip()
@@ -127,4 +146,4 @@ if __name__ == "__main__":
         quantizer.display_images()
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e}") 

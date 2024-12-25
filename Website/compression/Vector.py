@@ -107,6 +107,18 @@ class ImageCompressor:
             ax.axis('off')
         plt.tight_layout()
         plt.show()
+        
+    def vector(self):
+        image_path = self.image_path
+        compressed_path = "compressed_image.png"
+        decompressed_path = "decompressed_image.png"
+
+        compressor = ImageCompressor(image_path)
+        compressed_file = compressor.compress(compressed_path)
+        decompressed_file = compressor.decompress(decompressed_path)
+
+        compressor.load_image()
+        return compressed_file , decompressed_file
 
 if __name__ == "__main__":
     image_path = input("Enter the path to the image: ").strip()
