@@ -236,7 +236,7 @@ ul {
     .buttons button {
         width: 80%; 
         max-width: 300px; 
-        height: auto; 
+        height: 90px; 
         text-align: center; 
         padding: 15px 20px; 
         padding-bottom: 20px;

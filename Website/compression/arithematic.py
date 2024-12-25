@@ -138,6 +138,8 @@ if __name__ == "__main__":
 
     compressed_file_path = compressor.compress()
     print(f"Compressed Value saved to: {compressed_file_path}")
+    compressed_file_path = compressor.compress()
+    print(f"Compressed Value saved to: {compressed_file_path}")
 
     decompressed_file_path = compressor.decompress()
     print(f"Decompressed Text saved to: {decompressed_file_path}")
